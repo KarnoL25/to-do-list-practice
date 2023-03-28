@@ -1,0 +1,144 @@
+*{
+  margin: 0;padding: 0;box-sizing: border-box;
+  border: 0;list-style: none;
+}
+body{
+  background-color: #ccc;
+}
+.flexbox{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header_in{
+  padding: 1em;
+  background-color: #333;
+  height: 3em;
+}
+.header_in h2{
+  color:white;
+}
+.header_in input{
+  margin-left: 10px;
+  height: 2em;
+  width: 60%;
+  border-radius: 10px;
+  outline: none;
+  text-indent: 1em;
+}
+.list_top{
+  height: 50px;
+}
+.list_top h3{
+  margin-left: 1em;
+}
+.list_top span{
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  background-color: #ccf;
+  border-radius: 50%;
+  text-align: center;
+}
+.list_down li{
+  background-color: #fff;
+  padding: 10px ;
+  margin-bottom: 20px;
+}
+.list_down li .chx{
+  margin-right: 10px;
+}
+.list_down li .word{
+  flex: 1;
+  position: relative;
+}
+.list_down li .word span{
+  font-size: 18px;
+}
+.list_down li .word input{
+  outline-color: #ccc;
+  width: 60%;
+  height: 30px;
+  text-indent: 1em;
+}
+.list_down li .word .delete{
+  text-align: center;
+  width: 1.5em;
+  position: absolute;
+  right: 0;
+  color: #ccc;
+}
+
+
+
+@media screen and (min-width:480px){
+  .content{
+    width: 600px;
+    margin: 0 auto;
+  }
+  .flexbox{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header_in{
+    height: 50px;
+  }
+  header{
+    height: 50px;
+    background-color: #333;
+  }
+  header h2{
+    color: white;
+  }
+  header input{
+    width: 300px;
+    height: 30px;
+    background-color: white;
+    border-radius: 10px;
+    outline: none;
+    text-indent: 1em;
+  }
+  .list_top{
+    height: 50px;
+  }
+  .list_top span{
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    background-color: #ccf;
+    border-radius: 50%;
+    text-align: center;
+  }
+  .list_down li{
+    background-color: #fff;
+    padding: 10px ;
+    margin-bottom: 20px;
+  }
+  .list_down li .chx{
+    margin-right: 10px;
+  }
+  .list_down li .word{
+    flex: 1;
+    position: relative;
+  }
+  .list_down li .word span{
+    font-size: 18px;
+  }
+  .list_down li .word input{
+    outline-color: #ccc;
+    width: 60%;
+    height: 30px;
+    text-indent: 1em;
+  }
+  .list_down li .word .delete{
+    text-align: center;
+    width: 1.5em;
+    position: absolute;
+    right: 0;
+    color: #ccc;
+    cursor: pointer;
+  }
+}
+
+

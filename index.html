@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title></title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <div id="app">
+    <header>
+      <div class="content header_in flexbox">
+        <h2>ToDoList</h2>
+        <input type="text" placeholder="添加事项" v-model="inputValue" @keyup.enter="iptkeyup">
+      </div>
+    </header>
+    <my-list title="正在进行" :arr="goingArr" @chxfn="chxfn" @spanclick="spanClick" @deletearr="deleteArr" @savedata="savedata"></my-list>
+    <my-list title="已经完成" :arr="doneArr" @chxfn="chxfn" @spanclick="spanClick" @deletearr="deleteArr" @savedata="savedata"></my-list>
+  </div>
+
+<template id="list">
+  <section>
+    <div class="list content">
+      <div class="list_top flexbox">
+        <h3>{{title}}</h3>
+        <span>{{arr.length}}</span>
+      </div>
+      <ul class="list_down">
+        <li class="flexbox" v-for="(item,index) in arr" :key="item.id">
+          <input type="checkbox" class="chx" :checked="title==='已经完成'" @click.prevent="chxFn(index,title)">
+          <div class="word">
+            <span v-show="!item.ifinput" @click="spanClick(index,title)">{{item.content}}</span>
+            <!-- <span v-show="!item.ifinput" @click="item.ifinput=true">{{item.content}}</span> -->
+            <input type="text" v-show="item.ifinput" v-model="item.content" v-focus="item.ifinput" @blur="inputblur(item)">
+            <span class="delete" @click="deleteArr(index,title)">X</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+</template>
+
+<!-- 
+  引用数据类型：
+  子组件修改数据的时候，改的跟父组件的数据是同个内存空间
+ -->
+
+<script src="./vue.js"></script>
+
+<script>
+new Vue({
+  el: "#app",
+  data() {
+    return{
+      // 正在进行
+      goingArr:[],
+      // 已经完成
+      doneArr:[],
+      // 输入框的值
+      inputValue:''
+    }
+  },
+  methods: {
+    // 输入框回车事件
+    iptkeyup(){
+      // 为了保证ID的唯一性，选用时间戳作为ID
+      let obj = {
+        id:new Date().getTime(),
+        content:this.inputValue,
+        ifinput:false
+      }
+      this.goingArr.push(obj)
+      // 当数组修改完毕后，需要存起来（用笨方法实现）
+      // localStorage只能存简单数据类型，引用数据类型需要序列号 JSON.stringify (扩展：反序列化 JSON.parse)
+      localStorage.setItem('goingArr',JSON.stringify(this.goingArr))
+      this.inputValue = '' // 清空输入框的值
+    },
+    // 子组件点击了复选框而触发的函数
+    chxfn(index,title){
+      // 判断是不是正在进行数组goingArr，删除index项，把index项push到doneArr
+      if(title==='正在进行'){
+        let obj = this.goingArr[index]
+        this.goingArr.splice(index,1)
+        this.doneArr.push(obj)
+      }else{
+        let obj = this.doneArr[index]
+        this.doneArr.splice(index,1)
+        this.goingArr.push(obj)
+      }
+      this.savedata()
+    },
+    // 被子组件点击span所触发的函数
+    spanClick(index,title){
+      if(title==='正在进行'){
+        this.goingArr[index].ifinput = true
+      }else{
+        this.doneArr[index].ifinput = true
+      }
+    },
+    // 被子组件删除数组项所触发的函数
+    deleteArr(index,title){
+      if(title==='正在进行'){
+        this.goingArr.splice(index,1)
+      }else{
+        this.doneArr.splice(index,1)
+      }
+      this.savedata()
+    },
+    // 被子组件失焦所触发的函数
+    savedata(){
+      localStorage.setItem('goingArr',JSON.stringify(this.goingArr))
+      localStorage.setItem('doneArr',JSON.stringify(this.doneArr))
+    }
+  },
+  components:{
+    MyList:{
+      template:'#list',
+      props:['title','arr'],
+      methods:{
+        // 复选框点击
+        chxFn(index,title){
+          // 判断此时被点击的是goingArr是数组项还是doneArr的数组项（通过 title==='正在进行'）
+          // 提取被点击的那一项
+          // 子传父，让父级去删除某一项或者增加某一项
+          this.$emit('chxfn',index,title)
+        },
+        spanClick(index,title){
+          this.$emit('spanclick',index,title)
+        },
+        // 删除数据项
+        deleteArr(index,title){
+          this.$emit('deletearr',index,title)
+        },
+        // 失焦并存储
+        inputblur(item){
+          item.ifinput = false // 显示span
+          // 存储到localStorage,此时子组件存储麻烦，需要拜托父组件
+          this.$emit('savedata')
+        }
+      },
+      directives:{
+        focus:{
+          update(el,binding) {
+            if(binding.value){
+              el.focus()
+            }
+          },
+        }
+      }
+    }
+  },
+  // 组件在创建后（created）生命周期获取数据（做请求）
+  created(){
+    // 反序列化
+    this.goingArr = JSON.parse(localStorage.getItem('goingArr') || '[]')
+    this.doneArr = JSON.parse(localStorage.getItem('doneArr') || '[]')
+  }
+})
+</script>
+</body>
+</html>
